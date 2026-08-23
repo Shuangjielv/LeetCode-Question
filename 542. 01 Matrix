@@ -1,0 +1,71 @@
+Given an m x n binary matrix mat, return the distance of the nearest 0 for each cell.
+The distance between two cells sharing a common edge is 1.
+
+Example 1:
+Input: mat = [
+[0,0,0],
+[0,1,0],
+[0,0,0]]
+Output: [[0,0,0],[0,1,0],[0,0,0]]
+
+Example 2:
+Input: mat = [
+[0,0,0],
+[0,1,0],
+[1,1,1]]
+Output: [[0,0,0],[0,1,0],[1,2,1]]
+
+
+
+class Solution {
+public:
+    queue<pair<int,int>> q;
+    vector<vector<bool>> visited;
+    void bfs(vector<vector<int>>& mat,vector<vector<bool>>& visited){
+        while(!q.empty()){
+            int size = q.size();
+            for(int k = 0; k < size; k++){
+                auto cur = q.front();
+                q.pop();
+
+                int dx[4] = {1,-1,0,0};
+                int dy[4] = {0,0,-1,1};
+
+                int i = cur.first;
+                int j = cur.second;
+
+                for(int h = 0; h < 4; h++){
+                    int ni = i + dx[h];
+                    int nj = j + dy[h];
+
+                    if (ni < 0 || ni >= mat.size() || nj < 0 || nj >= mat[0].size()){
+                        continue;
+                    }
+                    if (visited[ni][nj]){
+                        continue;
+                    }
+                    if (mat[ni][nj] != 0){
+                        mat[ni][nj] = mat[i][j] + 1;   // According to the 'mat[i][j] + 1' to get the path
+                        q.push({ni,nj});
+                        visited[ni][nj] = true;
+                    }
+                }
+            }   
+        }
+    }
+    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
+        visited = vector<vector<bool>>(mat.size(),vector<bool>(mat[0].size(),false));
+        for(int i = 0; i < mat.size(); i++){
+            for(int j = 0; j < mat[0].size(); j++){
+                if(mat[i][j] == 0)      // using '0' as the start point
+                { 
+                    q.push({i,j});
+                    visited[i][j] = true;
+                }
+            }
+        }
+        bfs(mat,visited);
+        return mat;
+    }
+};
+
